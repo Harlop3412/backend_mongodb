@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const ProyectoSchema = new Schema({
     nombre:{
         type: String,
-        request: true,
+        required: true,
         maxLength: 100
     },
     imagen :{
@@ -11,13 +11,13 @@ const ProyectoSchema = new Schema({
         required : true,
         maxLength: 100
     },
-    repo:{
+    autor:{
         type: String,
         required: true,
         maxLength: 100
     },
-    tegnologias:{
-        type: [String]
+    genero:{
+        type: String
     },
     descripcion:{
         type: String,

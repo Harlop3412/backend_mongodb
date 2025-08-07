@@ -7,5 +7,5 @@ router.post("/",proyectoControllers.crearProyecto)
 router.get("/:id",proyectoControllers.obtenerProyectosPorId)
 router.put("/:id",proyectoControllers.modificarProyecto)
 router.delete("/:id",proyectoControllers.eliminarProyecto)
-router.delete("/nombre/nombreParam",proyectoControllers.eliminarProyecto)
+router.delete("/nombre/:nombreParam",proyectoControllers.eliminarProyectoPorNombre)
 module.exports = router

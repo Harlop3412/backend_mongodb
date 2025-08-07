@@ -1,3 +1,4 @@
+const proyectos = require("../models//proyectos")
 const ProyectosModel = require("../models//proyectos")
 exports.Hola = (req, res) => {
     console.log("hola desde el controlador")
@@ -13,22 +14,23 @@ exports.proyectosList = async (req, res) => {
 }//trae los datos de la bd get
 exports.crearProyecto = async (req,res)=>{
     try {
-        // const proyecto=req.body
+        const proyecto=req.body
         let nombre = req.body.nombre
         const imagen = req.body.imagen
-        const repo = req.body.repo
-        const tecnologias = req.body.tecnologias
+        const autor = req.body.autor
+        const genero = req.body.genero
         const descripcion = req.body.descripcion
         nombre = nombre.replace(/\s/g, "_") //expresion regular para quitar espacios vacios
 
         await ProyectosModel.create({
             nombre,
             imagen,
-            repo,
-            tecnologias,
+            autor,
+            genero,
             descripcion
         })
-        return res.status(201).json(tecnologias)
+        //return res.status(201).json(proyecto)
+        return res.status(201).json(nombre)
     } catch (error) {
         return res.status(500).send(error)
     }
@@ -49,7 +51,19 @@ exports.modificarProyecto = async (req,res) => {
     try {
         const {id} = req.params
         const proyecto = req.body
-        const proyectoCambiado = await ProyectosModel.findByIdAndUpdate(id,proyecto,{new:true})//el new es para que traiga el proyecto{objeto} modificado
+
+        let nombre = req.body.nombre.replace(/\s/g, "_") //expresion regular para quitar espacios vacios
+        const  proyecto_nuevo = {
+            "nombre":nombre,
+
+            "proyecto":req.body.imagen,
+            "autor": req.body.autor,
+            "genero": req.body.autor,
+            "descripcion": req.body.descripcion
+        }
+       
+        const proyectoCambiado = await ProyectosModel.findByIdAndUpdate(id,proyecto_nuevo,{new:true})//el new es para que traiga el proyecto{objeto} modificado
+
         if(proyectoCambiado == null){
             return res.staus(404).json({message:"proyecto no encontrado"})
         }
@@ -64,10 +78,10 @@ exports.eliminarProyecto = async (req,res) => {
         const {id} = req.params
         
         if(id.length!=24){
-            return res.staus(400).json({message:"id no válido"})
+            return res.status(400).json({message:"id no válido"})
         }
         await ProyectosModel.findByIdAndDelete(id)
-        return res.status(200).json({message:`Proyecto con ${id} eliminado`})
+        return res.status(200).json({message:`Libro con ${id} eliminado`})
     } catch (error) {
         return res.status(500).send(error)
     }
@@ -75,14 +89,14 @@ exports.eliminarProyecto = async (req,res) => {
 
 exports.eliminarProyectoPorNombre = async(req,res)=>{
     try {
-        const nombre = req.body.nombre
-        const {nombreParam} = req.params
-        if(nombre != nombreParam){
-            return res.status(400).json({message:`Datos inconsistentes`})
-        }
-        const proyecto = await ProyectosModel.findByIdAndDelete({nombre:nombre})
-        return res.status(200).json(proyecto)
+        const {nombre} = req.params
+        
+
+         await ProyectosModel.deleteOne(nombre)
+        return res.status(200).json({message:`Libro ${nombre} eliminado`})
     } catch (error) {
         return res.status(500).send(error)
     }
-}//busca por nombre en la bd y elimina
+}//busca por nombre en la bd y elimina delete
+
+
