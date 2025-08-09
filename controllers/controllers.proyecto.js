@@ -58,7 +58,7 @@ exports.modificarProyecto = async (req,res) => {
 
             "proyecto":req.body.imagen,
             "autor": req.body.autor,
-            "genero": req.body.autor,
+            "genero": req.body.genero,
             "descripcion": req.body.descripcion
         }
        
@@ -73,6 +73,40 @@ exports.modificarProyecto = async (req,res) => {
     }
 }//busca por id y modifica el objeto put
 
+exports.modificarProyectoPorNombre = async (req, res) => {
+    try {
+        const { nombreParam } = req.params;
+
+        const nuevoNombre = req.body.nombre.replace(/\s/g, "_");
+
+        const proyecto_nuevo = {
+            nombre: nuevoNombre,
+            proyecto: req.body.imagen,
+            autor: req.body.autor,
+            genero: req.body.genero, 
+            descripcion: req.body.descripcion
+        };
+
+        // Busca por nombre y actualiza el primero que encuentre
+        const proyectoCambiado = await ProyectosModel.findOneAndUpdate(
+            { nombre: nombreParam },     // Filtro de búsqueda
+            proyecto_nuevo,              // Datos nuevos
+            { new: true }                 // Devuelve el proyecto ya modificado
+        );
+
+        // Si no lo encontró
+        if (!proyectoCambiado) {
+            return res.status(404).json({ message: `Proyecto con nombre ${nombreParam} no encontrado` });
+        }
+
+        // Si sí lo encontró y modificó
+        return res.status(200).json(proyectoCambiado);
+
+    } catch (error) {
+        return res.status(500).json({ message: "Error al modificar el proyecto", error });
+    }
+};//modifica por nombre
+
 exports.eliminarProyecto = async (req,res) => {
     try {
         const {id} = req.params
@@ -85,18 +119,42 @@ exports.eliminarProyecto = async (req,res) => {
     } catch (error) {
         return res.status(500).send(error)
     }
-}//busca por id y elimina delete
+}// elimina por id delete
 
-exports.eliminarProyectoPorNombre = async(req,res)=>{
+
+exports.eliminarProyectoPorNombre = async (req, res) => {
     try {
-        const {nombre} = req.params
-        
+        const { nombre } = req.params;
 
-         await ProyectosModel.deleteOne(nombre)
-        return res.status(200).json({message:`Libro ${nombre} eliminado`})
+        const libroEliminado = await ProyectosModel.findOneAndDelete({ nombre });
+
+        if (!libroEliminado) {
+            return res.status(404).json({ message: `No se encontró el libro con nombre: ${nombre}` });
+        }
+
+        return res.status(200).json({ message: `Libro ${libroEliminado.nombre} eliminado` });
     } catch (error) {
-        return res.status(500).send(error)
+        return res.status(500).send(error);
     }
-}//busca por nombre en la bd y elimina delete
+};//elimina por nombre  delete
 
+
+// Controlador para buscar por nombre
+exports.obtenerProyectoPorNombre = async (req, res) => {
+    try {
+        const { nombre } = req.params;
+
+        const proyecto = await ProyectosModel.findOne({
+            nombre: { $regex: `^${nombre}$`, $options: "i" }
+        });
+
+        if (!proyecto) {
+            return res.status(404).json({ message: `No se encontró el libro con nombre: ${nombre}` });
+        }
+
+        return res.status(200).json(proyecto);
+    } catch (error) {
+        return res.status(500).send(error);
+    }
+};
 
