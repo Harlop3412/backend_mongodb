@@ -1,4 +1,4 @@
-const proyectos = require("../models//proyectos")
+//const proyectos = require("../models//proyectos")
 const ProyectosModel = require("../models//proyectos")
 exports.Hola = (req, res) => {
     console.log("hola desde el controlador")
@@ -56,7 +56,7 @@ exports.modificarProyecto = async (req,res) => {
         const  proyecto_nuevo = {
             "nombre":nombre,
 
-            "proyecto":req.body.imagen,
+            "imagen":req.body.imagen,
             "autor": req.body.autor,
             "genero": req.body.genero,
             "descripcion": req.body.descripcion
@@ -65,7 +65,7 @@ exports.modificarProyecto = async (req,res) => {
         const proyectoCambiado = await ProyectosModel.findByIdAndUpdate(id,proyecto_nuevo,{new:true})//el new es para que traiga el proyecto{objeto} modificado
 
         if(proyectoCambiado == null){
-            return res.staus(404).json({message:"proyecto no encontrado"})
+            return res.status(404).json({message:"proyecto no encontrado"})
         }
         return res.status(200).json(proyectoCambiado)
     } catch (error) {

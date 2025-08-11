@@ -1,11 +1,13 @@
 const express = require("express")
 const mongoose = require("mongoose")
 const proyectoRoutes = require("./routes/routes.proyectos")//
+const cors = require("cors")
 
 require("dotenv").config()
 const app = express()
 const PORT = process.env.PORT || 3006
 app.set("port",PORT)
+app.use(cors())
 app.get("/",(req,res)=>{
     console.log("bd royecto")
     res.send("bd proyecto")
