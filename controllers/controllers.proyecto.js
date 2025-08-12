@@ -81,7 +81,7 @@ exports.modificarProyectoPorNombre = async (req, res) => {
 
         const proyecto_nuevo = {
             nombre: nuevoNombre,
-            proyecto: req.body.imagen,
+            imagen: req.body.imagen,
             autor: req.body.autor,
             genero: req.body.genero, 
             descripcion: req.body.descripcion
