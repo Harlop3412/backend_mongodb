@@ -4,6 +4,7 @@ exports.Hola = (req, res) => {
     console.log("hola desde el controlador")
     res.send("hola desde el controlador")
 }
+
 exports.proyectosList = async (req, res) => {
     try {
         const proyectosList = await ProyectosModel.find({})
@@ -12,6 +13,7 @@ exports.proyectosList = async (req, res) => {
         return res.status(500).send(error)
     }
 }//trae los datos de la bd get
+
 exports.crearProyecto = async (req,res)=>{
     try {
         const proyecto=req.body
@@ -36,15 +38,19 @@ exports.crearProyecto = async (req,res)=>{
     }
 }//controlador que envia los datos a bd post
 
-exports.obtenerProyectosPorId = async(req,res)=>{
-    try {
-        const {id} = req.params
-        const proyecto = await ProyectosModel.findById(id)
-        return res.status(200).json(proyecto)
-    } catch (error) {
-        return res.status(500).send(error)
-        
+exports.obtenerProyectosPorId = async (req,res) => {
+  try {
+    const { id } = req.params;
+    const proyecto = await ProyectosModel.findById(id);
+
+    if (!proyecto) {
+      return res.status(404).json({ message: "Proyecto no encontrado" });
     }
+
+    return res.status(200).json(proyecto);
+  } catch (error) {
+    return res.status(500).json({ message: "Error al obtener proyecto", error });
+  }
 }//trae los datos por id get(id) busca un solo dato por id
 
 exports.modificarProyecto = async (req,res) => {
@@ -114,7 +120,12 @@ exports.eliminarProyecto = async (req,res) => {
         if(id.length!=24){
             return res.status(400).json({message:"id no válido"})
         }
-        await ProyectosModel.findByIdAndDelete(id)
+
+       const eliminado = await ProyectosModel.findByIdAndDelete(id)
+        if (!eliminado) {
+            return res.status(404).json({ message: "Proyecto no encontrado" })
+        }
+        
         return res.status(200).json({message:`Libro con ${id} eliminado`})
     } catch (error) {
         return res.status(500).send(error)
