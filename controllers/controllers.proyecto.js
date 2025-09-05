@@ -20,7 +20,7 @@ exports.crearProyecto = async (req,res)=>{
         const autor = req.body.autor
         const genero = req.body.genero
         const descripcion = req.body.descripcion
-        nombre = nombre.replace(/\s/g, "_") //expresion regular para quitar espacios vacios
+        nombre = nombre.replace(/\s/g, "_")
 
         await ProyectosModel.create({
             nombre,
@@ -29,7 +29,7 @@ exports.crearProyecto = async (req,res)=>{
             genero,
             descripcion
         })
-        //return res.status(201).json(proyecto)
+
         return res.status(201).json(nombre)
     } catch (error) {
         return res.status(500).send(error)
@@ -52,7 +52,7 @@ exports.modificarProyecto = async (req,res) => {
         const {id} = req.params
         const proyecto = req.body
 
-        let nombre = req.body.nombre.replace(/\s/g, "_") //expresion regular para quitar espacios vacios
+        let nombre = req.body.nombre.replace(/\s/g, "_")
         const  proyecto_nuevo = {
             "nombre":nombre,
 
@@ -69,7 +69,7 @@ exports.modificarProyecto = async (req,res) => {
         }
         return res.status(200).json(proyectoCambiado)
     } catch (error) {
-        
+         return res.status(500).json({ message: error.message })
     }
 }//busca por id y modifica el objeto put
 
@@ -91,7 +91,7 @@ exports.modificarProyectoPorNombre = async (req, res) => {
         const proyectoCambiado = await ProyectosModel.findOneAndUpdate(
             { nombre: nombreParam },     // Filtro de búsqueda
             proyecto_nuevo,              // Datos nuevos
-            { new: true }                 // Devuelve el proyecto ya modificado
+            { new: true }                 
         );
 
         // Si no lo encontró
